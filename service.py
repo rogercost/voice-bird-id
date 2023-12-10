@@ -1,6 +1,17 @@
 from fastapi import FastAPI, HTTPException, Query
 from pydantic import BaseModel
 from typing import List
+from langchain.document_loaders import DirectoryLoader
+from langchain.embeddings.huggingface import HuggingFaceEmbeddings
+from langchain.vectorstores import FAISS
+
+print("Building FAISS vector store...")
+loader = DirectoryLoader('C:\\Users\\Roger\\bird_descriptions', glob="**/*.txt")
+docs = loader.load()
+print(f"Loaded {len(docs)} bird descriptions, building embeddings...")
+embeddings = HuggingFaceEmbeddings(model_name="thenlper/gte-small")
+vectorstore = FAISS.from_documents(docs, embeddings)
+print(f"Finished embedding descriptions, starting application...")
 
 app = FastAPI()
 
@@ -33,8 +44,5 @@ async def get_closest_matches_endpoint(
         input_text: InputText,
         n: int = Query(1, title="Number of Matches", description="Number of closest matches to retrieve"),
 ):
-    try:
-        result = get_closest_matches(input_text.text, n)
-        return result
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+    docs = vectorstore.similarity_search(input_text.text)
+    return {"guessed_bird": docs[0].page_content[:100]}
