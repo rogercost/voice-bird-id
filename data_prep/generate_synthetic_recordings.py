@@ -25,8 +25,14 @@ for family, bird_list in aba_checklist.items():
     for name, scientific, code in bird_list:
 
         description_file = f"{description_dir}\\{name}.txt"
+        target_file = f"{output_dir}\\{name}.txt"
+
+        # Backfill failures from the last run. Remove for a full run.
+        if os.path.exists(target_file) and os.path.getsize(target_file) > 0:
+            continue
+
         try:
-            with open(description_file, 'r') as f:
+            with open(description_file, 'r', encoding='utf-8') as f:
                 description = f.read()
         except Exception as e:
             message = f"Failed to extract description from {description_file}: {e}"
@@ -50,7 +56,7 @@ for family, bird_list in aba_checklist.items():
             continue
 
         print(f"Received synthetic descriptions for {name}")
-        with open(f"{output_dir}\\{name}.txt", 'w') as f:
+        with open(target_file, 'w') as f:
             f.write(response.text)
 
         # 15 request per model per minute usage limit for the free tier:
