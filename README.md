@@ -2,36 +2,32 @@
 
 *** WORK IN PROGRESS ***
 
-A FastAPI service to match a user-provided bird description with a database of known descriptions, using embedding
+The ultimate goal is to build the back end of an app that will take a user's description of a bird in real time as it is
+being observed in the field (via speech-to-text) and be able to identify the bird. The proposed architecture is as 
+follows:
+
+1. Generate training data using an LLM to output hypothetical field descriptions of each ABA Area bird.
+2. Embed each of these descriptions and train a coarse-grained classifier to predict just the family, not the species yet.
+3. For each family, train a fine-grained classifier on the embeddings for birds within that family, to predict the species.
+
+## Initialization Steps
+
+1. Download the ABA Checklist from https://www.aba.org/aba-checklist/ (see instructions in `utils.py`).
+2. Run `extract_text_descriptions_allaboutbirds.py` to scrape formal descriptions of each bird.
+3. Run `generate_synthetic_recordings.py` to get 20 LLM-generated synthetic field recording transcripts for each bird.
+4. To be continued!
+
+## DEPRECATED - Version 1, Raw Embedding Similarity Search
+
+v1 is a FastAPI service to match a user-provided bird description with a database of known descriptions, using embedding
 similarity search. This project is the back end only and can be used to serve a front end that accepts voice-to-text
-for use in the field.
-
-## Setup Steps Completed
-
-1. `extract_text_descriptions_allaboutbirds.py` run 3/11 with 11 failed birds.
-```
-Failed to extract descriptions of 10 birds:
-American Herring Gull (Herring Gull) => https://www.allaboutbirds.org/guide/American_Herring_Gull_(Herring_Gull)/id
-Leach's Storm-Petrel => https://www.allaboutbirds.org/guide/Leachs_Storm-Petrel/id
-Black Storm-Petrel => https://www.allaboutbirds.org/guide/Black_Storm-Petrel/id
-Cory's Shearwater => https://www.allaboutbirds.org/guide/Corys_Shearwater/id
-Pink-footed Shearwater => https://www.allaboutbirds.org/guide/Pink-footed_Shearwater/id
-Black-vented Shearwater => https://www.allaboutbirds.org/guide/Black-vented_Shearwater/id
-Sargasso Shearwater => https://www.allaboutbirds.org/guide/Sargasso_Shearwater/id
-(American) Barn Owl => https://www.allaboutbirds.org/guide/(American)_Barn_Owl/id
-(Northern) House Wren => https://www.allaboutbirds.org/guide/(Northern)_House_Wren/id
-Common Redpoll (Redpoll) => https://www.allaboutbirds.org/guide/Common_Redpoll_(Redpoll)/id
-```
-
-## DEPRECATED - Setup Instructions for v1
+for use in the field. To set it up:
 
 1. Create a Python virtual environment and install the dependencies using `pip install -r requirements.txt`.
 2. Obtain an ebird API key and store it in an environment variable called `EBIRD_API_KEY`.
 3. Run `data_prep/extract_text_descriptions_allaboutbirds.py` to create a directory of text bird descriptions.
 4. Start the service using `uvicorn service:app` from the home directory.
 5. Navigate to http://localhost:8000/docs in a browser to interact with the service.
-
-## Next Steps from v1 as of 2/28/25
 
 This approach will attempt to do a completely raw embedding match, which may lack precision for two reasons: the embedding model likely does not finely differentiate based on different birding-specific terminology, and the formal descriptions of the birds may end up in a completely different embedding neighborhood than rough field descriptions provided by users. To address this, we could contemplate the following update to the design:
 
