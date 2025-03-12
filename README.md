@@ -6,7 +6,24 @@ A FastAPI service to match a user-provided bird description with a database of k
 similarity search. This project is the back end only and can be used to serve a front end that accepts voice-to-text
 for use in the field.
 
-## Setup Instructions
+## Setup Steps Completed
+
+1. `extract_text_descriptions_allaboutbirds.py` run 3/11 with 11 failed birds.
+```
+Failed to extract descriptions of 10 birds:
+American Herring Gull (Herring Gull) => https://www.allaboutbirds.org/guide/American_Herring_Gull_(Herring_Gull)/id
+Leach's Storm-Petrel => https://www.allaboutbirds.org/guide/Leachs_Storm-Petrel/id
+Black Storm-Petrel => https://www.allaboutbirds.org/guide/Black_Storm-Petrel/id
+Cory's Shearwater => https://www.allaboutbirds.org/guide/Corys_Shearwater/id
+Pink-footed Shearwater => https://www.allaboutbirds.org/guide/Pink-footed_Shearwater/id
+Black-vented Shearwater => https://www.allaboutbirds.org/guide/Black-vented_Shearwater/id
+Sargasso Shearwater => https://www.allaboutbirds.org/guide/Sargasso_Shearwater/id
+(American) Barn Owl => https://www.allaboutbirds.org/guide/(American)_Barn_Owl/id
+(Northern) House Wren => https://www.allaboutbirds.org/guide/(Northern)_House_Wren/id
+Common Redpoll (Redpoll) => https://www.allaboutbirds.org/guide/Common_Redpoll_(Redpoll)/id
+```
+
+## DEPRECATED - Setup Instructions for v1
 
 1. Create a Python virtual environment and install the dependencies using `pip install -r requirements.txt`.
 2. Obtain an ebird API key and store it in an environment variable called `EBIRD_API_KEY`.
@@ -14,7 +31,7 @@ for use in the field.
 4. Start the service using `uvicorn service:app` from the home directory.
 5. Navigate to http://localhost:8000/docs in a browser to interact with the service.
 
-## Next Steps
+## Next Steps from v1 as of 2/28/25
 
 This approach will attempt to do a completely raw embedding match, which may lack precision for two reasons: the embedding model likely does not finely differentiate based on different birding-specific terminology, and the formal descriptions of the birds may end up in a completely different embedding neighborhood than rough field descriptions provided by users. To address this, we could contemplate the following update to the design:
 
