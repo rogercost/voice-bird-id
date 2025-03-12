@@ -53,14 +53,13 @@ for family, bird_list in aba_checklist.items():
         with open(f"{output_dir}\\{name}.txt", 'w') as f:
             f.write(response.text)
 
-        # Short circuit for testing; remove for full run.
-        sys.exit(0)
-
         # 15 request per model per minute usage limit for the free tier:
         # https://console.cloud.google.com/apis/api/generativelanguage.googleapis.com/quotas?project=gen-lang-client-0835379782
         time.sleep(5)
 
 if len(failed_birds) > 0:
     print(f"Failed to generate training data for {len(failed_birds)} birds:")
-    for bird in failed_birds:
-        print(bird)
+    with open(f"{output_dir}\\failed_birds.txt", 'w') as f:
+        for bird in failed_birds:
+            print(bird)
+            f.write(bird)
