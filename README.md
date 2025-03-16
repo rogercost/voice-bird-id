@@ -15,7 +15,7 @@ follows:
 1. Download the ABA Checklist from https://www.aba.org/aba-checklist/ (see instructions in `utils.py`).
 2. Run `extract_text_descriptions_allaboutbirds.py` to scrape formal descriptions of each bird.
 3. Run `generate_synthetic_recordings.py` to get 20 LLM-generated synthetic field recording transcripts for each bird.
-4. To be continued!
+4. Run `collect_synth_rec_embeddings.py` to compute, tag and store embeddings for all transcripts in a pickle file. 
 
 ## DEPRECATED - Version 1, Raw Embedding Similarity Search
 
