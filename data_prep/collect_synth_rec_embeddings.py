@@ -17,7 +17,7 @@ species.
 """
 work_dir = "C:\\Users\\Roger\\Dropbox\\DOCUMENTS\\voice-bird-id"
 output_dir = f"{work_dir}\\training_data\\synthetic_recordings"
-output_pickle = f"{output_dir}\\synthetic_recordings.pkl"
+output_pickle = f"{work_dir}\\training_data\\synthetic_recordings.pkl"
 
 aba_checklist = read_aba_checklist("C:\\Users\\Roger\\Downloads\\ABA_Checklist-8.17.csv")
 
@@ -79,7 +79,11 @@ for family, bird_list in aba_checklist.items():
         df.to_pickle(embedding_pickle)
         print(f"Processed {len(df)} recordings for {name} of family {family}; wrote pickle file: {embedding_pickle}")
 
-print(f"Finished embedding all birds; generating unified pickle...")
+print(f"Finished embedding all birds.")
+for bird in failed_birds:
+    print(bird)
+
+print(f"Generating unified pickle...")
 
 dataframes = []
 processed = 0
