@@ -45,13 +45,14 @@ for family, bird_list in aba_checklist.items():
 
         try:
             with open(synth_rec_file, 'r') as f:
-                recordings = f.read().split('--')
+                recordings = [x.strip() for x in f.read().split('--')]
         except Exception as e:
             message = f"Failed to read synthetic recordings for {name} in {synth_rec_file}: {e}"
             failed_birds.append(message)
             print(message)
             continue
 
+        used_recordings = []
         for recording in recordings:
             if len(recording) == 0 or recording.isspace():
                 continue
@@ -64,14 +65,17 @@ for family, bird_list in aba_checklist.items():
 
             # print(len(embedding.embeddings[0].values))  # 3072
             # print(embedding.embeddings[0].values[0:10])  # [-0.016967427, -0.020281313, ...
+            used_recordings.append(recording)
             embeddings.append(embedding.embeddings[0].values)
 
         data = {
             "name": name,
             "family": family,
-            "embedding": embeddings
+            "embedding": embeddings,
+            "raw_recording": used_recordings
         }
         df = pd.DataFrame(data)
+        print(df.head())
         df.to_pickle(embedding_pickle)
         print(f"Processed {len(df)} recordings for {name} of family {family}; wrote pickle file: {embedding_pickle}")
 
