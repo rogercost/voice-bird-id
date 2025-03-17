@@ -46,7 +46,7 @@ for family, bird_list in aba_checklist.items():
 
         try:
             with open(synth_rec_file, 'r') as f:
-                recordings = [x.strip() for x in f.read().split('--')]
+                recordings = [x.strip() for x in f.read().splitlines()]
         except Exception as e:
             message = f"Failed to read synthetic recordings for {name} in {synth_rec_file}: {e}"
             failed_birds.append(message)
@@ -55,7 +55,7 @@ for family, bird_list in aba_checklist.items():
 
         used_recordings = []
         for recording in recordings:
-            if len(recording) > 50 and not recording.isspace():
+            if len(recording) > 0 and not recording.isspace():
                 used_recordings.append(recording)
 
         try:

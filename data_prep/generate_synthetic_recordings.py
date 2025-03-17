@@ -25,10 +25,6 @@ for family, bird_list in aba_checklist.items():
     family_size = len(bird_list)
     for name, scientific, code in bird_list:
 
-        # Address class imbalance by taking a uniform number of samples per family.
-        num_samples = 400 / family_size
-        prompt = prompt_root.replace('__NUM__', str(num_samples))
-
         description_file = f"{description_dir}\\{name}.txt"
         target_file = f"{output_dir}\\{name}.txt"
 
@@ -51,22 +47,34 @@ for family, bird_list in aba_checklist.items():
             print(message)
             continue
 
-        prompt = prompt_root + description
-        try:
-            response = client.models.generate_content(model="gemini-2.0-flash", contents=prompt)
-        except Exception as e:
-            message = f"Failed to invoke Gemini for {name}: {e}"
-            failed_birds.append(message)
-            print(message)
-            continue
+        # Address class imbalance by taking a uniform number of samples per family.
+        num_samples = max(1, int(40 / family_size))
+        prompt = prompt_root.replace('__NUM__', '20') + description  # Run in batches of 20
 
-        print(f"Generated {num_samples} recordings for {name} (one of {family_size} in family {family}")
+        output_lines = []
+        for sample in range(num_samples):
+            # 15 request per model per minute usage limit for the free tier:
+            # https://console.cloud.google.com/apis/api/generativelanguage.googleapis.com/quotas?project=gen-lang-client-0835379782
+            time.sleep(5)
+            try:
+                response = client.models.generate_content(model="gemini-2.0-flash", contents=prompt)
+            except Exception as e:
+                message = f"Failed to invoke one Gemini batch for {name}: {e}"
+                failed_birds.append(message)
+                print(message)
+                continue
+
+            for line in response.text.splitlines():
+
+                # Quality control: the model sometimes ignores the prompt and puts preliminary header lines in anyway.
+                if len(line) > 10 and not line.startswith("OK, here are") and not line.startswith("Okay, here are"):
+                    output_lines.append(line + os.linesep)
+
         with open(target_file, 'w') as f:
-            f.write(response.text)
+            f.writelines(output_lines)
 
-        # 15 request per model per minute usage limit for the free tier:
-        # https://console.cloud.google.com/apis/api/generativelanguage.googleapis.com/quotas?project=gen-lang-client-0835379782
-        time.sleep(5)
+        ts = time.ctime()
+        print(f"{ts}: Generated {len(output_lines)} recordings for {name} (one of {family_size} in family {family}")
 
 if len(failed_birds) > 0:
     print(f"Failed to generate training data for {len(failed_birds)} birds:")
