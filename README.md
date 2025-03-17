@@ -15,7 +15,14 @@ follows:
 1. Download the ABA Checklist from https://www.aba.org/aba-checklist/ (see instructions in `utils.py`).
 2. Run `extract_text_descriptions_allaboutbirds.py` to scrape formal descriptions of each bird.
 3. Run `generate_synthetic_recordings.py` to get 20 LLM-generated synthetic field recording transcripts for each bird.
-4. Run `collect_synth_rec_embeddings.py` to compute, tag and store embeddings for all transcripts in a pickle file. 
+4. Run `collect_synth_rec_embeddings.py` to compute, tag and store embeddings for all transcripts in a pickle file.
+5. Run `train_synthrec_l1_classifier.ipynb` in Google Colab to train the coarse-grained predictor.
+
+## TODO items
+
+1. The coarse-grained predictor performance is poor due to class imbalance and some sparse clases. Consider one of the following approaches:
+  - Create an "other" class lumping together families with low representation. Assess skew after this change, is it acceptable?
+  - Collect 10x the training data, since the fine-grained predictor will perform poorly if "support" averages only 4 (20% * 20 samples per bird).
 
 ## DEPRECATED - Version 1, Raw Embedding Similarity Search
 
