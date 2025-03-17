@@ -55,12 +55,8 @@ for family, bird_list in aba_checklist.items():
 
         used_recordings = []
         for recording in recordings:
-            if len(recording) > 0 and not recording.isspace():
+            if len(recording) > 50 and not recording.isspace():
                 used_recordings.append(recording)
-
-        # Sometimes we get preliminary content at the beginning. We prompt the LLM not to include it but still sometimes
-        # get it. So since we know we asked for 20, take the last 20, excluding anything preliminary.
-        used_recordings = used_recordings[-20:]
 
         try:
             time.sleep(5)

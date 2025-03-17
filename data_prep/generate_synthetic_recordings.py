@@ -22,14 +22,19 @@ with open('prompt_root.txt', 'r') as f:
 
 failed_birds = []
 for family, bird_list in aba_checklist.items():
+    family_size = len(bird_list)
     for name, scientific, code in bird_list:
+
+        # Address class imbalance by taking a uniform number of samples per family.
+        num_samples = 400 / family_size
+        prompt = prompt_root.replace('__NUM__', str(num_samples))
 
         description_file = f"{description_dir}\\{name}.txt"
         target_file = f"{output_dir}\\{name}.txt"
 
         # Backfill failures from the last run. Remove for a full run.
-        if os.path.exists(target_file) and os.path.getsize(target_file) > 0:
-            continue
+        # if os.path.exists(target_file) and os.path.getsize(target_file) > 0:
+        #     continue
 
         try:
             with open(description_file, 'r', encoding='utf-8') as f:
@@ -55,7 +60,7 @@ for family, bird_list in aba_checklist.items():
             print(message)
             continue
 
-        print(f"Received synthetic descriptions for {name}")
+        print(f"Generated {num_samples} recordings for {name} (one of {family_size} in family {family}")
         with open(target_file, 'w') as f:
             f.write(response.text)
 
