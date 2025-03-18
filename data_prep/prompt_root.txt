@@ -2,7 +2,9 @@ Imagine you are a birdwatcher who is observing a bird through binoculars. The bi
 
 What I would like is exactly __NUM__ different variants of the exact words you might say into the tape recorder, observing under different circumstances with varying visibility, lighting and behavior types. The description can be fairly disjointed, as you may be straining to see the bird and keep it in sight, or it could be a longer and clearer observation of a bird sitting still. In your __NUM__ different descriptions, please incorporate a variety of these imagined conditions.
 
-Importantly, every single description should be a minimum of 4 sentences, reflecting a birder observing the bird for a full minute or more and noting every possible detail - colors, markings, size, shape, behavior. Even if it starts to get repetitive, I need __NUM__ fully formed descriptions meeting the criteria outlined.
+Importantly, every single description should be a minimum of 5 sentences, reflecting a birder observing the bird for 2-3 minutes and noting every known visual detail found in the description, including size and shape, colors and markings (subject to lighting), and at least one behavior type. Even if it starts to get repetitive, I need __NUM__ fully formed descriptions meeting the criteria outlined.
+
+Each description is meant to be independent and does not follow on the last one, so a description should not start with e.g. "Here it is again". It is a completely fresh observation.
 
 Bear in mind that as a beginning birder you are not going to make a guess at the ID of the bird within the description. The __NUM__ descriptions should include only direct observations - e.g. color, size, shape, markings, behavior etc. and should not speculate as to the actual name or ID. You may make a guess at the broad category ("looks like a duck/sparrow/heron").
 

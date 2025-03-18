@@ -3,6 +3,7 @@ import sys
 import time
 
 from google import genai
+from pathlib import Path
 from utils import read_aba_checklist
 """
 This script will generate sets of synthetic recording transcripts of birders describing birds being observed in the
@@ -14,6 +15,7 @@ client = genai.Client(api_key=api_key)
 work_dir = "C:\\Users\\Roger\\Dropbox\\DOCUMENTS\\voice-bird-id"
 description_dir = f"{work_dir}\\bird_descriptions"
 output_dir = f"{work_dir}\\training_data\\synthetic_recordings"
+Path(output_dir).mkdir(parents=True, exist_ok=True)
 
 aba_checklist = read_aba_checklist("C:\\Users\\Roger\\Downloads\\ABA_Checklist-8.17.csv")
 
@@ -27,10 +29,11 @@ for family, bird_list in aba_checklist.items():
 
         description_file = f"{description_dir}\\{name}.txt"
         target_file = f"{output_dir}\\{name}.txt"
+        bird_failed = False
 
         # Backfill failures from the last run. Remove for a full run.
-        # if os.path.exists(target_file) and os.path.getsize(target_file) > 0:
-        #     continue
+        if os.path.exists(target_file) and os.path.getsize(target_file) > 0:
+            continue
 
         try:
             with open(description_file, 'r', encoding='utf-8') as f:
@@ -47,8 +50,7 @@ for family, bird_list in aba_checklist.items():
             print(message)
             continue
 
-        # Address class imbalance by taking a uniform number of samples per family.
-        num_samples = max(1, int(40 / family_size))
+        num_samples = 2
         prompt = prompt_root.replace('__NUM__', '20') + description  # Run in batches of 20
 
         output_lines = []
@@ -61,17 +63,18 @@ for family, bird_list in aba_checklist.items():
             except Exception as e:
                 message = f"Failed to invoke one Gemini batch for {name}: {e}"
                 failed_birds.append(message)
+                bird_failed = True
                 print(message)
                 continue
 
             for line in response.text.splitlines():
-
                 # Quality control: the model sometimes ignores the prompt and puts preliminary header lines in anyway.
-                if len(line) > 10 and not line.startswith("OK, here are") and not line.startswith("Okay, here are"):
+                if len(line) > 40 and not line.startswith("OK, here are") and not line.startswith("Okay, here are"):
                     output_lines.append(line + os.linesep)
 
-        with open(target_file, 'w') as f:
-            f.writelines(output_lines)
+        if not bird_failed:
+            with open(target_file, 'w') as f:
+                f.writelines(output_lines)
 
         ts = time.ctime()
         print(f"{ts}: Generated {len(output_lines)} recordings for {name} (one of {family_size} in family {family}")
