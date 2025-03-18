@@ -17,14 +17,15 @@ follows:
 2. Run `extract_text_descriptions_allaboutbirds.py` to scrape formal descriptions of each bird.
 3. Run `collect_description_embeddings` to compute and store embeddings for the descriptions in a pickle file.
 4. Run `generate_synthetic_recordings.py` to get 20 LLM-generated synthetic field recording transcripts for each bird.
-5. Run `collect_synth_rec_embeddings.py` to compute, and store embeddings for all the recording transcripts.
+5. Run `collect_synth_rec_embeddings.py` to compute and store embeddings for all the recording transcripts.
 6. Run `train_synthrec_l1_classifier.ipynb` in Google Colab to form the clusters, then train the cluster classifier.
 
 ## TODO items
 
-1. The coarse-grained predictor performance is poor due to class imbalance and some sparse clases. Consider one of the following approaches:
-  - Create an "other" class lumping together families with low representation. Assess skew after this change, is it acceptable?
-  - Collect 10x the training data, since the fine-grained predictor will perform poorly if "support" averages only 4 (20% * 20 samples per bird).
+Steps 1-5 above have been run. We now need to update the notebook to do the following:
+1. Cluster the description embeddings. Use silhouette score to find optimal # of clusters.
+2. Generate a name for each cluster using the birds in it, and an LLM prompt.
+3. Train the L1 classifier to predict the cluster.
 
 ## DEPRECATED - Version 1, Raw Embedding Similarity Search
 

@@ -17,7 +17,7 @@ align perfectly with the taxonomic family species, but which may work better for
 """
 work_dir = "C:\\Users\\Roger\\Dropbox\\DOCUMENTS\\voice-bird-id"
 output_dir = f"{work_dir}\\bird_descriptions"
-output_pickle = f"{work_dir}\\bird_descriptions"
+output_pickle = f"{work_dir}\\bird_descriptions.pkl"
 
 aba_checklist = read_aba_checklist("C:\\Users\\Roger\\Downloads\\ABA_Checklist-8.17.csv")
 
@@ -39,7 +39,7 @@ for family, bird_list in aba_checklist.items():
             continue
 
         try:
-            with open(description_file, 'r') as f:
+            with open(description_file, 'r', encoding='utf-8') as f:
                 description = f.read()
         except Exception as e:
             message = f"Failed to read synthetic recordings for {name} in {description_file}: {e}"
@@ -51,8 +51,15 @@ for family, bird_list in aba_checklist.items():
         families.append(family)
         descriptions.append(description)
 
-print(f"Submitting {len(descriptions)} descriptions to embedding model...")
-embeddings = model.get_embeddings(descriptions)
+# Initialize an empty list to store all embeddings
+embeddings = []
+
+# Process descriptions in batches of 25
+for i in range(0, len(descriptions), 25):
+    batch = descriptions[i:i + 25]
+    print(f"Submitting {len(batch)} descriptions to embedding model...")
+    batch_embeddings = model.get_embeddings(batch)
+    embeddings.extend(batch_embeddings)
 
 data = {
     "name": names,

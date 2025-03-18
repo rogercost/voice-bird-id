@@ -58,8 +58,9 @@ for family, bird_list in aba_checklist.items():
             if len(recording) > 0 and not recording.isspace():
                 used_recordings.append(recording)
 
+        # 1500 RPM limit and only first 2048 tokens used.
+        # See https://cloud.google.com/vertex-ai/generative-ai/docs/quotas
         try:
-            time.sleep(5)
             embeddings = model.get_embeddings(used_recordings)
         except Exception as e:
             print(f"Caught exception attempting to embed for {name}: {e}")
