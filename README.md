@@ -6,17 +6,19 @@ The ultimate goal is to build the back end of an app that will take a user's des
 being observed in the field (via speech-to-text) and be able to identify the bird. The proposed architecture is as 
 follows:
 
-1. Generate training data using an LLM to output hypothetical field descriptions of each ABA Area bird.
-2. Embed each of these descriptions and train a coarse-grained classifier to predict just the family, not the species yet.
-3. For each family, train a fine-grained classifier on the embeddings for birds within that family, to predict the species.
+1. Find official descriptions of all ABA Area birds and cluster them to come up with a taxonomy.
+2. Generate training data using an LLM to output hypothetical birder field recordings of each ABA Area bird.
+3. Embed each of these recordings and train a coarse-grained classifier to predict the cluster from #1.
+4. Inside each cluster, train a fine-grained classifier to predict the species from the embedding.
 
 ## Initialization Steps
 
 1. Download the ABA Checklist from https://www.aba.org/aba-checklist/ (see instructions in `utils.py`).
 2. Run `extract_text_descriptions_allaboutbirds.py` to scrape formal descriptions of each bird.
-3. Run `generate_synthetic_recordings.py` to get 20 LLM-generated synthetic field recording transcripts for each bird.
-4. Run `collect_synth_rec_embeddings.py` to compute, tag and store embeddings for all transcripts in a pickle file.
-5. Run `train_synthrec_l1_classifier.ipynb` in Google Colab to train the coarse-grained predictor.
+3. Run `collect_description_embeddings` to compute and store embeddings for the descriptions in a pickle file.
+4. Run `generate_synthetic_recordings.py` to get 20 LLM-generated synthetic field recording transcripts for each bird.
+5. Run `collect_synth_rec_embeddings.py` to compute, and store embeddings for all the recording transcripts.
+6. Run `train_synthrec_l1_classifier.ipynb` in Google Colab to form the clusters, then train the cluster classifier.
 
 ## TODO items
 
